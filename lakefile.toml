@@ -12,7 +12,10 @@ maxSynthPendingDepth = 3
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-rev = "v4.27.0"
+rev = "master"
 
 [[lean_lib]]
 name = "Tripod"
+
+[[lean_lib]]
+name = "ToMathlib"
