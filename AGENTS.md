@@ -21,7 +21,7 @@ It documents practical commands and coding conventions used here.
 ## Toolchain
 - Lean toolchain pin: `leanprover/lean4:v4.28.0-rc1`.
 - Package manager/build tool: `lake`.
-- Main dependency: `mathlib` (pinned by `lake-manifest.json`).
+- Main dependencies: `mathlib`, `aftk` (pinned by `lake-manifest.json`).
 - First-time setup requires `elan`, `lake`, and a working C toolchain.
 - Use `lake env ...` when invoking Lean tools so project dependencies are in scope.
 
@@ -50,6 +50,48 @@ lake env lean ToMathlib/ProfiniteGrp/Out.lean
 - There is currently no separate unit-test framework configured.
 - Treat file/module elaboration as the test signal.
 - Linting is integrated into elaboration via Lean options (see below).
+
+## AFTK tooling (blueprint + elab_artifacts)
+- `aftk` provides the `blueprint` CLI for managing a `.blueprint/` node store; use the CLI rather than editing JSON by hand.
+- Initialize the store:
+```bash
+lake exe blueprint init
+```
+- Create a node (example):
+```bash
+lake exe blueprint node create \
+  --content "example" \
+  --status in_progress \
+  --priority high \
+  --meta '{"title":"draft spec"}'
+```
+- Add dependencies and validate scheduling:
+```bash
+lake exe blueprint node deps add <node-id> <dependency-id>
+lake exe blueprint schedule next
+lake exe blueprint check
+```
+- JSON output: `lake exe blueprint --json <command>` (the `--json` flag must appear before the command path).
+- Lock handling: mutating commands use `.blueprint/.lock`; use `lake exe blueprint lock status` and `lake exe blueprint lock clear` for stale locks.
+
+- `aftk` also provides a Lake `elab_artifacts` facet for elaboration artifacts.
+- Output location: `.lake/build/elab_artifacts/<ModulePath>.json`.
+- Single module examples:
+```bash
+lake build +Tripod:elab_artifacts
+lake build +ToMathlib.ProfiniteGrp.Out:elab_artifacts
+```
+- Library/package examples:
+```bash
+lake build Tripod:elab_artifacts
+lake build ToMathlib:elab_artifacts
+lake build :elab_artifacts
+```
+- Clean rebuild:
+```bash
+lake clean
+lake build :elab_artifacts
+```
 
 ## Single-test workflow guidance
 - For a change in one file, run `lake env lean path/to/File.lean` first.

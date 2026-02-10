@@ -10,6 +10,7 @@ package tripod where
     ⟨`maxSynthPendingDepth, 3⟩]
 
 require "leanprover-community" / mathlib @ git "master"
+require aftk from git "https://github.com/adamtopaz/aftk" @ "main"
 
 @[default_target] lean_lib Tripod
 
