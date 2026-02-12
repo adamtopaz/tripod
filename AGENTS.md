@@ -74,9 +74,23 @@ formalized "short description" as <term-or-tactic>
 formalized "short description" from "docs/Notes.md#marker-id" as <term-or-tactic>
 ```
 
+- Dependency tracking is mandatory for blueprint artifacts:
+  - When an `informal`/`formalized` declaration conceptually depends on earlier declarations,
+    encode that dependency with interpolation (`{DeclName}`) in the description string.
+  - Prefer explicit declaration references over prose-only descriptions.
+  - Example:
+  ```lean
+  informal "Transport {rhoQToOutGeomPi1OverQbar} along {geomPi1OverCIsoGeomPi1OverQbar}."
+  formalized "Deduce injectivity of {rhoQToOutFreeProfiniteGroupOnTwo} from {rhoQToOutGeomPi1OverQbar_injective}." as <term-or-tactic>
+  ```
+  - If you expect a dependency edge and it does not appear in Informalize output, update the
+    description to include the missing `{...}` reference(s).
+
 - Markdown doc references:
   - Use repo-relative `path[#id]` (for example: `docs/Notes.md#lemma-plan`).
   - Marker format inside markdown: `<!-- informalize:id=lemma-plan -->`.
+  - Keep `docs/` synchronized with Lean changes: if you add/rename/remove informal or
+    formalized artifacts, update the corresponding markdown sections and marker ids in the same task.
   - `#informal_lint` checks missing files, non-markdown refs, missing/duplicate marker ids, and long summaries without doc refs.
 
 - In-file commands:
@@ -104,6 +118,13 @@ lake exe informalize code-actions --module Tripod --decl myDecl
 lake exe informalize hover --module Tripod --decl myDecl
 lake exe informalize panel --module Tripod --file Tripod.lean
 ```
+
+- Dependency verification workflow:
+  - Run `lake exe informalize deps --module <Module.Name>` to inspect dependency edges among
+    informal declarations.
+  - Run `lake exe informalize blueprint --module <Module.Name> --format markdown` (or `json`)
+    to inspect dependency edges across all blueprint entries.
+  - Treat missing expected edges as a metadata bug and fix descriptions before finishing.
 
 - CLI flag rules:
   - `--module` / `-m` is required and repeatable.

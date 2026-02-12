@@ -61,4 +61,26 @@ abbrev Out (G : ProfiniteGrp) : Type _ :=
 instance outGroup (G : ProfiniteGrp) : Group (Out G) := by
   infer_instance
 
+@[simp] lemma iso_conjAut_conjAut {G H : ProfiniteGrp} (e : G ≅ H) (g : G) :
+    e.conjAut (conjAut G g) = conjAut H (e.hom g) := by
+  ext x
+  simp [CategoryTheory.Iso.conjAut_apply, conjAut_hom_apply, mul_assoc]
+
+lemma inn_map_conjAut {G H : ProfiniteGrp} (e : G ≅ H) :
+    (Inn G).map (e.conjAut : CategoryTheory.Aut G ≃* CategoryTheory.Aut H) = Inn H := by
+  ext a
+  constructor
+  · rintro ⟨b, hb, rfl⟩
+    rcases hb with ⟨g, rfl⟩
+    exact ⟨e.hom g, by
+      simp [conjAutHom]⟩
+  · rintro ⟨h, rfl⟩
+    refine ⟨conjAut G (e.inv h), ⟨e.inv h, rfl⟩, ?_⟩
+    simp [conjAutHom]
+
+/-- An isomorphism of profinite groups induces an isomorphism of outer automorphism groups. -/
+noncomputable def outEquivOfIso {G H : ProfiniteGrp} (e : G ≅ H) :
+    Out G ≃* Out H :=
+  QuotientGroup.congr (Inn G) (Inn H) (e.conjAut) (inn_map_conjAut e)
+
 end ProfiniteGrp
