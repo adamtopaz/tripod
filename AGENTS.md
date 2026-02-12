@@ -21,7 +21,7 @@ It documents practical commands and coding conventions used here.
 ## Toolchain
 - Lean toolchain pin: `leanprover/lean4:v4.28.0-rc1`.
 - Package manager/build tool: `lake`.
-- Main dependencies: `mathlib`, `aftk` (pinned by `lake-manifest.json`).
+- Main dependencies: `mathlib`, `informalize` (pinned by `lake-manifest.json`).
 - First-time setup requires `elan`, `lake`, and a working C toolchain.
 - Use `lake env ...` when invoking Lean tools so project dependencies are in scope.
 
@@ -47,55 +47,74 @@ lake build ToMathlib
 lake env lean Tripod.lean
 lake env lean ToMathlib/ProfiniteGrp/Out.lean
 ```
+- If a module uses `Informalize`, run module-scoped informalization checks:
+```bash
+lake exe informalize status --module Tripod
+lake exe informalize lint --module Tripod
+```
 - There is currently no separate unit-test framework configured.
 - Treat file/module elaboration as the test signal.
 - Linting is integrated into elaboration via Lean options (see below).
 
-## AFTK tooling (blueprint + elab_artifacts)
-- `aftk` provides the `blueprint` CLI for managing a `.blueprint/` node store; use the CLI rather than editing JSON by hand.
-- Initialize the store:
-```bash
-lake exe blueprint init
-```
-- Create a node (example):
-```bash
-lake exe blueprint node create \
-  --content "example" \
-  --status in_progress \
-  --priority high \
-  --meta '{"title":"draft spec"}'
-```
-- Add dependencies and validate scheduling:
-```bash
-lake exe blueprint node deps add <node-id> <dependency-id>
-lake exe blueprint schedule next
-lake exe blueprint check
-```
-- JSON output: `lake exe blueprint --json <command>` (the `--json` flag must appear before the command path).
-- Lock handling: mutating commands use `.blueprint/.lock`; use `lake exe blueprint lock status` and `lake exe blueprint lock clear` for stale locks.
+## Informalize tooling (gradual formalization)
+- `informalize` is an intentionally unsound staging framework based on `Informalize.Informal`.
+- Standard lifecycle for declarations:
+  1) `informal "..."` placeholder to keep progress moving,
+  2) `formalized "..." as ...` once a concrete term/proof exists,
+  3) remove wrappers and keep prose as `/-- ... -/` docs.
+- Add `import Informalize` in files that use `informal`/`formalized` syntax or `#informal_*` commands.
+- Definitions using `informal` should usually be marked `noncomputable`.
+- Soundness gate for final claims: run `#print axioms <DeclName>` and ensure `Informalize.Informal` is absent.
 
-- `aftk` also provides a Lake `elab_artifacts` facet for elaboration artifacts.
-- Output location: `.lake/build/elab_artifacts/<ModulePath>.json`.
-- Single module examples:
-```bash
-lake build +Tripod:elab_artifacts
-lake build +ToMathlib.ProfiniteGrp.Out:elab_artifacts
+- Core syntax (term and tactic forms):
+```lean
+informal "short description"
+informal "short description" from "docs/Notes.md#marker-id"
+formalized "short description" as <term-or-tactic>
+formalized "short description" from "docs/Notes.md#marker-id" as <term-or-tactic>
 ```
-- Library/package examples:
-```bash
-lake build Tripod:elab_artifacts
-lake build ToMathlib:elab_artifacts
-lake build :elab_artifacts
+
+- Markdown doc references:
+  - Use repo-relative `path[#id]` (for example: `docs/Notes.md#lemma-plan`).
+  - Marker format inside markdown: `<!-- informalize:id=lemma-plan -->`.
+  - `#informal_lint` checks missing files, non-markdown refs, missing/duplicate marker ids, and long summaries without doc refs.
+
+- In-file commands:
+```lean
+#informal_status
+#informal_deps
+#informal_lint
+#export_blueprint
+#export_blueprint "json"
+#informal_code_actions
+#informal_code_actions myDecl
+#informal_hover myDecl
+#informal_panel
+#informal_panel "Tripod.lean"
 ```
-- Clean rebuild:
+
+- CLI equivalents (outside Lean files):
 ```bash
-lake clean
-lake build :elab_artifacts
+lake exe informalize status --module Tripod
+lake exe informalize deps --module Tripod
+lake exe informalize lint --module Tripod
+lake exe informalize blueprint --module Tripod --format markdown
+lake exe informalize blueprint --module Tripod --format json
+lake exe informalize code-actions --module Tripod --decl myDecl
+lake exe informalize hover --module Tripod --decl myDecl
+lake exe informalize panel --module Tripod --file Tripod.lean
 ```
+
+- CLI flag rules:
+  - `--module` / `-m` is required and repeatable.
+  - `--decl` is required for `hover` and optional for `code-actions`.
+  - `--file` is required for `panel`.
+  - `--format` is only valid for `blueprint` (`markdown` or `json`).
 
 ## Single-test workflow guidance
 - For a change in one file, run `lake env lean path/to/File.lean` first.
 - Then run `lake build Tripod` or `lake build ToMathlib` for target-level confidence.
+- If `Informalize` syntax/metadata changed, also run `lake exe informalize lint --module <Module.Name>`.
 - Before finalizing substantial changes, run full `lake build`.
 - If a declaration is complex, isolate proof experiments in a temporary scratch file, then port final proof.
 - Delete temporary scratch files before finishing.
@@ -183,6 +202,11 @@ lake build
 # focused builds
 lake build Tripod
 lake build ToMathlib
+
+# informalize checks
+lake exe informalize status --module Tripod
+lake exe informalize lint --module Tripod
+lake exe informalize blueprint --module Tripod --format json
 
 # single-file check (single-test equivalent)
 lake env lean Tripod.lean
