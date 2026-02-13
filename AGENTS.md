@@ -69,6 +69,10 @@ lake exe informalize locations --module Tripod
   any other mechanism. The whole point of the `informal` elaborator is to serve as the
   staging/placeholder system for unformalized mathematics. Declarations stay as `informal`
   until they are genuinely formalized with real definitions and proofs.
+- **IMPORTANT**: Do not "stub" missing mathematics with oversimplified/trivial definitions
+  (e.g. defining a complex group as `PUnit`, using `by trivial`, etc.) even temporarily.
+  Use the `informal[...]` elaborator for placeholders so the intended content is tracked
+  and documented in `informal/*.md`.
 
 - Core syntax (term forms):
 ```lean

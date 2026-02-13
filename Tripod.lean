@@ -14,21 +14,21 @@ abbrev AbsoluteGaloisGroupQ : Type :=
   Gal((AlgebraicClosure ℚ) / ℚ)
 
 /-- The free profinite group on two generators. -/
-noncomputable abbrev FreeProfiniteGroupOnTwo : ProfiniteGrp :=
+noncomputable abbrev FreeProfiniteGroupOnTwo : ProfiniteGrp.{0} :=
   ProfiniteGrp.ProfiniteCompletion.completion (GrpCat.of (FreeGroup (Fin 2)))
 
 /--
 Blueprint placeholder for the geometric etale fundamental group of
 `P^1 - {0,1,infinity}` over `C`.
 -/
-noncomputable def geomPi1ThreePuncturedLineOverC : ProfiniteGrp :=
+noncomputable def geomPi1ThreePuncturedLineOverC : ProfiniteGrp.{0} :=
   informal[Tripod.geometricPi1OverC]
 
 /--
 Blueprint placeholder for the geometric etale fundamental group of
 `P^1 - {0,1,infinity}` over `AlgebraicClosure ℚ`.
 -/
-noncomputable def geomPi1ThreePuncturedLineOverQbar : ProfiniteGrp :=
+noncomputable def geomPi1ThreePuncturedLineOverQbar : ProfiniteGrp.{0} :=
   informal[Tripod.geometricPi1OverQbar]
 
 /--
@@ -39,7 +39,7 @@ This fits into the fundamental exact sequence
 from SGA1, where the geometric fundamental group is a normal subgroup of the
 arithmetic one, with quotient the absolute Galois group.
 -/
-noncomputable def arithPi1ThreePuncturedLineOverQ : ProfiniteGrp :=
+noncomputable def arithPi1ThreePuncturedLineOverQ : ProfiniteGrp.{0} :=
   informal[Tripod.arithPi1OverQ]
 
 /--
@@ -85,7 +85,7 @@ fundamental exact sequence via the general construction
 -/
 noncomputable def rhoQToOutGeomPi1OverQbar :
     AbsoluteGaloisGroupQ →* ProfiniteGrp.Out geomPi1ThreePuncturedLineOverQbar :=
-  informal[Tripod.step3.rhoQToOutGeomPi1OverQbar]
+  fundamentalExactSequence.outerAction
 
 /-- Blueprint step 3b: transport that outer action from `Qbar` to `C`. -/
 noncomputable def rhoQToOutGeomPi1OverC :
