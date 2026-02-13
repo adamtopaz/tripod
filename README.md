@@ -15,11 +15,12 @@ The declaration currently exists as:
 
 - `Tripod.exists_injective_hom_absoluteGaloisQ_to_outFreeProfiniteGroupOnTwo`
 
-and is still a `sorry` placeholder.
+and is assembled from staged Informalize placeholders (not from `sorry`).
 
 ## Repository structure
 
 - `Tripod.lean`: target theorem statement and core abbreviations.
+- `informal/Tripod.md`: Informalize location source for active placeholders.
 - `ToMathlib/ProfiniteGrp/Out.lean`: local construction of `ProfiniteGrp.Out` and supporting lemmas.
 - `ToMathlib.lean`: entry point for local helper modules.
 - `lakefile.lean`: Lake package configuration.
@@ -55,4 +56,4 @@ lake env lean ToMathlib/ProfiniteGrp/Out.lean
 
 - The target theorem statement is in place.
 - The supporting outer automorphism quotient setup for profinite groups is in place.
-- The final injectivity proof has not yet been formalized.
+- The final arithmetic injectivity input is still represented by an informal placeholder.

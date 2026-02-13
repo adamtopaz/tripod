@@ -1,30 +1,26 @@
 ## docs/ folder
 
-This folder contains markdown notes used by the Informalize toolkit.
-Each expandable explanation should live in a markdown file and include
-an inline marker id that Lean declarations can reference.
+This folder contains human-facing notes about the project blueprint.
 
-### Marker format
+The Informalize package no longer reads doc references from `docs/*.md`.
+Location checking now uses dotted ids inside `informal[...]` and resolves
+them against markdown headings under `informal/*.md`.
 
-Use this exact HTML comment format above the relevant section:
+### Informalize id mapping
 
-```md
-<!-- informalize:id=my-marker-id -->
-```
-
-### Referencing from Lean
-
-Reference a marker with a repo-relative path plus `#id`:
+Use this Lean syntax:
 
 ```lean
-informal "proof sketch" from "docs/Notes.md#my-marker-id"
-formalized "proof sketch" from "docs/Notes.md#my-marker-id" as by
-  -- proof term
-  sorry
+informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
 ```
 
-### Naming conventions
+This resolves to:
 
-- Use lowercase kebab-case ids.
+- markdown file: `informal/Tripod.md`
+- heading path: `step1` then `freeProfiniteGroupOnTwoIsoGeomPi1OverC`
+
+### Conventions
+
 - Keep ids stable once referenced in Lean.
-- Prefer one marker per conceptual step in a proof plan.
+- Use heading titles that exactly match id components.
+- Keep one clear heading path per placeholder declaration.

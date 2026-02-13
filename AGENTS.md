@@ -50,7 +50,9 @@ lake env lean ToMathlib/ProfiniteGrp/Out.lean
 - If a module uses `Informalize`, run module-scoped informalization checks:
 ```bash
 lake exe informalize status --module Tripod
-lake exe informalize lint --module Tripod
+lake exe informalize deps --module Tripod
+lake exe informalize decls --module Tripod --with-locations
+lake exe informalize locations --module Tripod
 ```
 - There is currently no separate unit-test framework configured.
 - Treat file/module elaboration as the test signal.
@@ -58,84 +60,64 @@ lake exe informalize lint --module Tripod
 
 ## Informalize tooling (gradual formalization)
 - `informalize` is an intentionally unsound staging framework based on `Informalize.Informal`.
-- Standard lifecycle for declarations:
-  1) `informal "..."` placeholder to keep progress moving,
-  2) `formalized "..." as ...` once a concrete term/proof exists,
-  3) remove wrappers and keep prose as `/-- ... -/` docs.
-- Add `import Informalize` in files that use `informal`/`formalized` syntax or `#informal_*` commands.
+- Current syntax is centered on term elaboration via `informal` (there is no
+  `formalized` wrapper in the current release).
+- Add `import Informalize` in files that use `informal` placeholders.
 - Definitions using `informal` should usually be marked `noncomputable`.
 - Soundness gate for final claims: run `#print axioms <DeclName>` and ensure `Informalize.Informal` is absent.
+- **IMPORTANT**: Never replace `informal` placeholders with `axiom`, `opaque`, `sorry`, or
+  any other mechanism. The whole point of the `informal` elaborator is to serve as the
+  staging/placeholder system for unformalized mathematics. Declarations stay as `informal`
+  until they are genuinely formalized with real definitions and proofs.
 
-- Core syntax (term and tactic forms):
+- Core syntax (term forms):
 ```lean
-informal "short description"
-informal "short description" from "docs/Notes.md#marker-id"
-formalized "short description" as <term-or-tactic>
-formalized "short description" from "docs/Notes.md#marker-id" as <term-or-tactic>
+informal
+informal x y
+informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
+informal[Tripod.step3.rhoQToOutGeomPi1OverQbar] x
 ```
 
-- Dependency tracking is mandatory for blueprint artifacts:
-  - When an `informal`/`formalized` declaration conceptually depends on earlier declarations,
-    encode that dependency with interpolation (`{DeclName}`) in the description string.
-  - Prefer explicit declaration references over prose-only descriptions.
-  - Example:
-  ```lean
-  informal "Transport {rhoQToOutGeomPi1OverQbar} along {geomPi1OverCIsoGeomPi1OverQbar}."
-  formalized "Deduce injectivity of {rhoQToOutFreeProfiniteGroupOnTwo} from {rhoQToOutGeomPi1OverQbar_injective}." as <term-or-tactic>
-  ```
-  - If you expect a dependency edge and it does not appear in Informalize output, update the
-    description to include the missing `{...}` reference(s).
+- Location ids are dotted names that map to markdown headings:
+  - `informal[Tripod.step3.rhoQToOutGeomPi1OverQbar]` resolves to
+    `informal/Tripod.md`, heading path `step3` then `rhoQToOutGeomPi1OverQbar`.
+  - Validation happens during elaboration; missing files/headings are hard errors.
 
-- Markdown doc references:
-  - Use repo-relative `path[#id]` (for example: `docs/Notes.md#lemma-plan`).
-  - Marker format inside markdown: `<!-- informalize:id=lemma-plan -->`.
-  - Keep `docs/` synchronized with Lean changes: if you add/rename/remove informal or
-    formalized artifacts, update the corresponding markdown sections and marker ids in the same task.
-  - `#informal_lint` checks missing files, non-markdown refs, missing/duplicate marker ids, and long summaries without doc refs.
-
-- In-file commands:
-```lean
-#informal_status
-#informal_deps
-#informal_lint
-#export_blueprint
-#export_blueprint "json"
-#informal_code_actions
-#informal_code_actions myDecl
-#informal_hover myDecl
-#informal_panel
-#informal_panel "Tripod.lean"
-```
+- Informal markdown source:
+  - Keep location headings for placeholders under `informal/*.md`.
+  - For this repo, placeholder ids are rooted in `informal/Tripod.md`.
+  - Heading titles must match id components exactly.
 
 - CLI equivalents (outside Lean files):
 ```bash
 lake exe informalize status --module Tripod
 lake exe informalize deps --module Tripod
-lake exe informalize lint --module Tripod
-lake exe informalize blueprint --module Tripod --format markdown
-lake exe informalize blueprint --module Tripod --format json
-lake exe informalize code-actions --module Tripod --decl myDecl
-lake exe informalize hover --module Tripod --decl myDecl
-lake exe informalize panel --module Tripod --file Tripod.lean
+lake exe informalize decls --module Tripod
+lake exe informalize decls --module Tripod --with-locations
+lake exe informalize decl --module Tripod --decl geomPi1ThreePuncturedLineOverC
+lake exe informalize locations --module Tripod
+lake exe informalize location --module Tripod --location Tripod.step3.rhoQToOutGeomPi1OverQbar
 ```
 
 - Dependency verification workflow:
   - Run `lake exe informalize deps --module <Module.Name>` to inspect dependency edges among
     informal declarations.
-  - Run `lake exe informalize blueprint --module <Module.Name> --format markdown` (or `json`)
-    to inspect dependency edges across all blueprint entries.
-  - Treat missing expected edges as a metadata bug and fix descriptions before finishing.
+  - Use `lake exe informalize decls --module <Module.Name> --with-locations` and
+    `lake exe informalize locations --module <Module.Name>` to verify location coverage.
+  - Dependencies are inferred from used constants, including transitive traversal through
+    non-informal bridge declarations.
 
 - CLI flag rules:
   - `--module` / `-m` is required and repeatable.
-  - `--decl` is required for `hover` and optional for `code-actions`.
-  - `--file` is required for `panel`.
-  - `--format` is only valid for `blueprint` (`markdown` or `json`).
+  - `--decl` is required for `decl`.
+  - `--location` is required for `location`.
+  - `--bare-only` and `--with-locations` are only for `decls`.
 
 ## Single-test workflow guidance
 - For a change in one file, run `lake env lean path/to/File.lean` first.
 - Then run `lake build Tripod` or `lake build ToMathlib` for target-level confidence.
-- If `Informalize` syntax/metadata changed, also run `lake exe informalize lint --module <Module.Name>`.
+- If `Informalize` syntax/metadata changed, also run `lake exe informalize status --module <Module.Name>`
+  and `lake exe informalize deps --module <Module.Name>`.
 - Before finalizing substantial changes, run full `lake build`.
 - If a declaration is complex, isolate proof experiments in a temporary scratch file, then port final proof.
 - Delete temporary scratch files before finishing.
@@ -226,8 +208,9 @@ lake build ToMathlib
 
 # informalize checks
 lake exe informalize status --module Tripod
-lake exe informalize lint --module Tripod
-lake exe informalize blueprint --module Tripod --format json
+lake exe informalize deps --module Tripod
+lake exe informalize decls --module Tripod --with-locations
+lake exe informalize locations --module Tripod
 
 # single-file check (single-test equivalent)
 lake env lean Tripod.lean

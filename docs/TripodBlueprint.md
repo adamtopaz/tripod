@@ -1,112 +1,55 @@
 # Blueprint for `Tripod.lean`
 
-This file records the high-level proof plan for
+This document records the high-level proof plan for
 `exists_injective_hom_absoluteGaloisQ_to_outFreeProfiniteGroupOnTwo`.
 
-Current Lean placeholder names used in `Tripod.lean`:
+## Informalize ids used in Lean
 
-- `geomPi1ThreePuncturedLineOverC`
-- `geomPi1ThreePuncturedLineOverQbar`
-- `rhoQToOutGeomPi1OverQbar`
-- `rhoQToOutGeomPi1OverC`
-- `rhoQToOutFreeProfiniteGroupOnTwo`
+The current Informalize version resolves ids from `informal/*.md` headings.
+In this project, placeholders in `Tripod.lean` use ids rooted at
+`informal/Tripod.md`:
 
-Dependency note: in Informalize descriptions, `{declName}` interpolation is
-used to record explicit artifact dependencies.
+- `Tripod.geometricPi1OverC`
+- `Tripod.geometricPi1OverQbar`
+- `Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC`
+- `Tripod.step2.geomPi1OverCIsoGeomPi1OverQbar`
+- `Tripod.step3.rhoQToOutGeomPi1OverQbar`
+- `Tripod.step4.rhoQToOutGeomPi1OverQbarInjective`
 
-<!-- informalize:id=geometric-pi1-over-c -->
-## Geometric pi_1 over C
+The canonical markdown source for these ids is `informal/Tripod.md`.
 
-Introduce a placeholder object for the geometric etale fundamental group
-of `P^1 - {0,1,infinity}` over `C`, viewed as a profinite group.
+## Step plan
 
-<!-- informalize:id=geometric-pi1-over-qbar -->
-## Geometric pi_1 over Qbar
+### Geometric inputs
 
-Introduce a placeholder object for the geometric etale fundamental group
-of `P^1 - {0,1,infinity}` over `Qbar = AlgebraicClosure Q`.
+Introduce placeholders for geometric etale fundamental groups of
+`P^1 - {0,1,infinity}` over `C` and over `Qbar = AlgebraicClosure Q`.
 
-<!-- informalize:id=step-1-free-profinite-group-over-c -->
-## Step 1: free profinite group as geometric etale pi_1 over C
+### Step 1: free profinite group over C
 
-Identify the free profinite group on two generators with the etale
-fundamental group of `P^1 - {0,1,infinity}` over `C` as an isomorphism
-of profinite groups.
+Identify `FreeProfiniteGroupOnTwo` with geometric etale `pi_1` over `C`.
 
-<!-- informalize:id=step-2-base-change-c-to-qbar -->
-## Step 2: compare geometric etale pi_1 over C and over Qbar
+### Step 2: compare C and Qbar geometric groups
 
-Identify the etale fundamental group of `P^1 - {0,1,infinity}` over `C`
-with the corresponding geometric etale fundamental group over
-`Qbar = AlgebraicClosure Q`.
+Identify geometric etale `pi_1` over `C` with geometric etale `pi_1` over
+`Qbar`.
 
-<!-- informalize:id=out-iso-from-group-iso -->
-## Transport to outer automorphism groups
+### Step 3: build and transport rho
 
-Show that an isomorphism of profinite groups induces an isomorphism
-between their outer automorphism groups.
-This is implemented as `ProfiniteGrp.outEquivOfIso` in
-`ToMathlib/ProfiniteGrp/Out.lean`.
+1. Define the outer Galois action
+   `Gal(Qbar/Q) ->* Out(pi_1_geom over Qbar)`.
+2. Transport to `Out(pi_1_geom over C)`.
+3. Transport to `Out(FreeProfiniteGroupOnTwo)`.
 
-<!-- informalize:id=step-3-fundamental-exact-sequence -->
-## Step 3: construct rho from the fundamental exact sequence over Q
+The transport infrastructure uses
+`ProfiniteGrp.outEquivOfIso` from `ToMathlib/ProfiniteGrp/Out.lean`.
 
-Use the fundamental exact sequence for `P^1 - {0,1,infinity}` over `Q`
-to obtain the outer action of `Gal(Qbar/Q)` on the geometric etale
-fundamental group. Via the identifications from Steps 1 and 2, this
-produces the homomorphism
+### Step 4: injectivity
 
-`rho : Gal(Qbar/Q) ->* Out(FreeProfiniteGroupOnTwo)`.
+1. Prove injectivity over `Qbar` using arithmetic input from Belyi.
+2. Transport injectivity through the two comparison isomorphisms.
 
-<!-- informalize:id=step-3-rho-to-out-geometric-pi1-over-qbar -->
-## Step 3a: outer action on geometric pi_1 over Qbar
+### Target theorem assembly
 
-First define the outer Galois action
-
-`Gal(Qbar/Q) ->* Out(pi_1_geom over Qbar)`
-
-from the fundamental exact sequence over `Q`.
-
-<!-- informalize:id=step-3-rho-to-out-geometric-pi1-over-c -->
-## Step 3b: transport the action to geometric pi_1 over C
-
-Use the comparison isomorphism between geometric etale fundamental groups
-over `C` and `Qbar` to obtain
-
-`Gal(Qbar/Q) ->* Out(pi_1_geom over C)`.
-
-<!-- informalize:id=step-3-rho-to-out-free-profinite-group -->
-## Step 3c: transport to the target outer automorphism group
-
-Use the identification between `FreeProfiniteGroupOnTwo` and the
-geometric etale fundamental group over `C` to obtain the target map
-into `Out(FreeProfiniteGroupOnTwo)`.
-
-<!-- informalize:id=step-4-belyi-injectivity -->
-## Step 4: prove injectivity of rho using Belyi
-
-Show that `rho` is injective, with the key arithmetic input given by
-Belyi's theorem.
-
-<!-- informalize:id=step-4-belyi-injectivity-qbar -->
-## Step 4a: Belyi injectivity over Qbar
-
-Prove injectivity for the action
-
-`Gal(Qbar/Q) ->* Out(pi_1_geom over Qbar)`
-
-using Belyi's theorem.
-
-<!-- informalize:id=step-4-transport-injectivity -->
-## Step 4b: transport injectivity to the target rho
-
-Deduce injectivity of the final target map by transporting the `Qbar`
-injectivity statement through the isomorphisms from Steps 1 and 2.
-Concretely, this is composition with maps induced by group isomorphisms,
-which preserves injectivity.
-
-<!-- informalize:id=target-theorem-assembly -->
-## Target theorem assembly
-
-Combine the construction of `rho` from Step 3 with injectivity from
-Step 4 to conclude the target theorem in `Tripod.lean`.
+Combine the constructed `rho` with transported injectivity to conclude the
+target existence + injectivity theorem.

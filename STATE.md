@@ -94,20 +94,19 @@ The injectivity proof is split into two mathematical statements:
 
 ## Current formalization status (Informalize)
 
-From the current `Tripod` blueprint metadata:
+From `lake exe informalize status --module Tripod`:
 
-- Total entries: **9**
-- Informal entries: **6**
-- Formalized entries: **3**
-- Progress: **33%**
+- Tracked declarations: **6**
+- Declarations with markdown locations: **6**
+- Declarations with empty locations: **0**
+- Unique markdown locations: **6**
 
-Already formalized in `Tripod.lean`:
+Tracked declarations correspond to the active placeholders in `Tripod.lean`.
+Transport constructions and the final transport-injectivity proof are now plain Lean
+code (not wrapped in Informalize-specific `formalized` syntax, which was removed in the
+new Informalize release).
 
-- Transport $\rho_{\overline{\mathbf Q}} \mapsto \rho_{\mathbf C}$.
-- Transport $\rho_{\mathbf C} \mapsto \rho$.
-- Deduction of injectivity of $\rho$ from injectivity of $\rho_{\overline{\mathbf Q}}$.
-
-Still informal (main mathematical gaps):
+Main remaining mathematical gaps:
 
 - Concrete models for $\Pi_{\mathbf C}$ and $\Pi_{\overline{\mathbf Q}}$.
 - Isomorphisms $\widehat F_2 \cong \Pi_{\mathbf C}$ and $\Pi_{\mathbf C} \cong \Pi_{\overline{\mathbf Q}}$.
@@ -116,16 +115,18 @@ Still informal (main mathematical gaps):
 
 ## Dependency shape of the blueprint
 
-The dependency graph matches the intended mathematics:
+`lake exe informalize deps --module Tripod` currently reports:
 
-- $\rho_{\mathbf C}$ depends on $\rho_{\overline{\mathbf Q}}$ and the comparison
-  $\Pi_{\mathbf C} \cong \Pi_{\overline{\mathbf Q}}$.
-- $\rho$ depends on $\rho_{\mathbf C}$ and
-  $\widehat F_2 \cong \Pi_{\mathbf C}$.
-- Injectivity of $\rho$ depends on injectivity of $\rho_{\overline{\mathbf Q}}$.
+- Leaves: `geomPi1ThreePuncturedLineOverC`, `geomPi1ThreePuncturedLineOverQbar`.
+- `geomPi1OverCIsoGeomPi1OverQbar` depends on both geometric placeholders.
+- `freeProfiniteGroupOnTwoIsoGeomPi1OverC` depends on
+  `geomPi1ThreePuncturedLineOverC`.
+- `rhoQToOutGeomPi1OverQbar` depends on `geomPi1ThreePuncturedLineOverQbar`.
+- `rhoQToOutGeomPi1OverQbar_injective` depends on
+  `rhoQToOutGeomPi1OverQbar` and `geomPi1ThreePuncturedLineOverQbar`.
 
-So the project is currently in a consistent staged state: transport machinery is formalized,
-while the deepest arithmetic-geometric inputs remain explicitly isolated as informal goals.
+So the dependency shape still reflects the intended staged development, with transport
+machinery formalized and arithmetic-geometric inputs isolated as explicit placeholders.
 
 ## Next steps
 
@@ -145,5 +146,6 @@ while the deepest arithmetic-geometric inputs remain explicitly isolated as info
      \rho_{\overline{\mathbf Q}} : G_{\mathbf Q} \to \operatorname{Out}(\Pi_{\overline{\mathbf Q}}).
      $$
 4. **Keep blueprint metadata synchronized while refining**
-   - For each new declaration, add `{DeclName}` dependencies and matching `docs/` markers,
-     and re-run `informalize status`, `deps`, `lint`, and `blueprint` checks.
+   - For each new placeholder declaration, add/update a matching id path in
+     `informal/Tripod.md` and use `informal[Tripod....]` in Lean.
+   - Re-run `informalize status`, `deps`, `decls`, and `locations` checks.
