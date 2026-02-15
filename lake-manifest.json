@@ -5,7 +5,7 @@
    "type": "git",
    "subDir": null,
    "scope": "",
-   "rev": "b4b32275d84afb75010bd22f9f3c0bad876ee165",
+   "rev": "fc3d84afb02748c9869d981d0d078f5661afc3b1",
    "name": "informalize",
    "manifestFile": "lake-manifest.json",
    "inputRev": "main",

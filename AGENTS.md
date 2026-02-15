@@ -82,15 +82,15 @@ informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
 informal[Tripod.step3.rhoQToOutGeomPi1OverQbar] x
 ```
 
-- Location ids are dotted names that map to markdown headings:
+- Location ids are dotted names that map to markdown files:
   - `informal[Tripod.step3.rhoQToOutGeomPi1OverQbar]` resolves to
-    `informal/Tripod.md`, heading path `step3` then `rhoQToOutGeomPi1OverQbar`.
-  - Validation happens during elaboration; missing files/headings are hard errors.
+    `informal/Tripod/step3/rhoQToOutGeomPi1OverQbar.md`.
+  - Validation happens during elaboration; missing files are hard errors.
 
 - Informal markdown source:
-  - Keep location headings for placeholders under `informal/*.md`.
-  - For this repo, placeholder ids are rooted in `informal/Tripod.md`.
-  - Heading titles must match id components exactly.
+  - Keep one markdown file per location id under `informal/<Root>/...`.
+  - For this repo, placeholder ids are rooted in `informal/Tripod/**/*.md`.
+  - Using `# <full.location.id>` as the file title is recommended for clarity.
 
 - CLI equivalents (outside Lean files):
 ```bash
