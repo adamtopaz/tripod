@@ -22,14 +22,14 @@ Blueprint placeholder for the geometric etale fundamental group of
 `P^1 - {0,1,infinity}` over `C`.
 -/
 noncomputable def geomPi1ThreePuncturedLineOverC : ProfiniteGrp.{0} :=
-  informal[Tripod.geometricPi1OverC]
+  informal[Tripod.Objects.geomPi1_tripod_over_C]
 
 /--
 Blueprint placeholder for the geometric etale fundamental group of
 `P^1 - {0,1,infinity}` over `AlgebraicClosure ℚ`.
 -/
 noncomputable def geomPi1ThreePuncturedLineOverQbar : ProfiniteGrp.{0} :=
-  informal[Tripod.geometricPi1OverQbar]
+  informal[Tripod.Objects.geomPi1_tripod_over_Qbar]
 
 /--
 The arithmetic etale fundamental group of `P^1 - {0,1,infinity}` over `ℚ`.
@@ -40,7 +40,7 @@ from SGA1, where the geometric fundamental group is a normal subgroup of the
 arithmetic one, with quotient the absolute Galois group.
 -/
 noncomputable def arithPi1ThreePuncturedLineOverQ : ProfiniteGrp.{0} :=
-  informal[Tripod.arithPi1OverQ]
+  informal[Tripod.Objects.arithPi1_tripod_over_Q]
 
 /--
 The fundamental exact sequence of etale fundamental groups:
@@ -57,23 +57,23 @@ noncomputable def fundamentalExactSequence :
       geomPi1ThreePuncturedLineOverQbar
       arithPi1ThreePuncturedLineOverQ
       (ProfiniteGrp.of AbsoluteGaloisGroupQ) :=
-  informal[Tripod.fundamentalExactSequence]
+  informal[Tripod.Constructions.pi1_exact_sequence_tripod_over_Q]
 
 /--
-Blueprint step 1: identify `FreeProfiniteGroupOnTwo` with the geometric etale fundamental
-group of `P^1 - {0,1,infinity}` over `C`.
+Identify `FreeProfiniteGroupOnTwo` with the geometric etale fundamental group of
+`P^1 - {0,1,infinity}` over `C` (Riemann existence + `π₁` of the thrice-punctured sphere).
 -/
 noncomputable def freeProfiniteGroupOnTwoIsoGeomPi1OverC :
     FreeProfiniteGroupOnTwo ≅ geomPi1ThreePuncturedLineOverC :=
-  informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
+  informal[Tripod.Identifications.Fhat2_iso_geomPi1_tripod_over_C]
 
 /--
-Blueprint step 2: identify the geometric etale fundamental group over `C` with the one over
-`AlgebraicClosure ℚ`.
+Identify the geometric etale fundamental group over `C` with the one over `AlgebraicClosure ℚ`
+(invariance under algebraically closed base change).
 -/
 noncomputable def geomPi1OverCIsoGeomPi1OverQbar :
     geomPi1ThreePuncturedLineOverC ≅ geomPi1ThreePuncturedLineOverQbar :=
-  informal[Tripod.step2.geomPi1OverCIsoGeomPi1OverQbar]
+  informal[Tripod.Identifications.geomPi1_tripod_over_C_iso_over_Qbar]
 
 /--
 Blueprint step 3a: define the outer Galois action on the geometric etale fundamental group
@@ -103,11 +103,12 @@ noncomputable def rhoQToOutFreeProfiniteGroupOnTwo :
     rhoQToOutGeomPi1OverC
 
 /--
-Blueprint step 4a: injectivity over `Qbar`, with arithmetic input from Belyi's theorem.
+Faithfulness of the outer Galois action on the geometric fundamental group over `Qbar`
+(arithmetic input from Belyi's theorem / dessins d'enfants).
 -/
 theorem rhoQToOutGeomPi1OverQbar_injective :
     Function.Injective rhoQToOutGeomPi1OverQbar := by
-  exact informal[Tripod.step4.rhoQToOutGeomPi1OverQbarInjective]
+  exact informal[Tripod.Theorems.galois_action_on_geomPi1_tripod_faithful]
 
 /--
 Blueprint step 4b: deduce injectivity of `ρ` from injectivity over `Qbar` via transport.

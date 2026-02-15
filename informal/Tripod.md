@@ -1,17 +1,42 @@
 # Tripod
 
-Informal placeholders for `Tripod.lean` now live in per-location files under
-`informal/Tripod/`.
+This directory is the natural-language companion to the formal development in
+`Tripod.lean`. The formal side defines profinite groups and maps between them; the
+`informal[...]` tags point to mathematical statements and proof sketches recorded here.
 
-- `Tripod.geometricPi1OverC`: `informal/Tripod/geometricPi1OverC.md`
-- `Tripod.geometricPi1OverQbar`: `informal/Tripod/geometricPi1OverQbar.md`
-- `Tripod.arithPi1OverQ`: `informal/Tripod/arithPi1OverQ.md`
-- `Tripod.fundamentalExactSequence`: `informal/Tripod/fundamentalExactSequence.md`
-- `Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC`:
-  `informal/Tripod/step1/freeProfiniteGroupOnTwoIsoGeomPi1OverC.md`
-- `Tripod.step2.geomPi1OverCIsoGeomPi1OverQbar`:
-  `informal/Tripod/step2/geomPi1OverCIsoGeomPi1OverQbar.md`
-- `Tripod.step3.rhoQToOutGeomPi1OverQbar`:
-  `informal/Tripod/step3/rhoQToOutGeomPi1OverQbar.md` (reference note)
-- `Tripod.step4.rhoQToOutGeomPi1OverQbarInjective`:
-  `informal/Tripod/step4/rhoQToOutGeomPi1OverQbarInjective.md`
+The motivating object is the "tripod"
+
+`X := P^1 \ {0,1,\infty}`,
+
+viewed over various base fields. The classical Grothendieck--Teichmuller/Galois
+representation is the outer action of `\mathrm{Gal}(\bar{\mathbf Q}/\mathbf Q)` on the
+geometric etale fundamental group of `X`.
+
+In the current file layout, location ids are organized by mathematical role:
+
+- General conventions (basepoints, conjugacy, `\mathrm{Out}`):
+  - `informal/Tripod/Conventions.md`
+
+- Objects (definitions of the fundamental groups):
+  - `Tripod.Objects.geomPi1_tripod_over_C`: `informal/Tripod/Objects/geomPi1_tripod_over_C.md`
+  - `Tripod.Objects.geomPi1_tripod_over_Qbar`:
+    `informal/Tripod/Objects/geomPi1_tripod_over_Qbar.md`
+  - `Tripod.Objects.arithPi1_tripod_over_Q`: `informal/Tripod/Objects/arithPi1_tripod_over_Q.md`
+
+- Constructions (standard exact sequence and resulting action):
+  - `Tripod.Constructions.pi1_exact_sequence_tripod_over_Q`:
+    `informal/Tripod/Constructions/pi1_exact_sequence_tripod_over_Q.md`
+
+- Identifications (comparison with the free profinite group and base change):
+  - `Tripod.Identifications.Fhat2_iso_geomPi1_tripod_over_C`:
+    `informal/Tripod/Identifications/Fhat2_iso_geomPi1_tripod_over_C.md`
+  - `Tripod.Identifications.geomPi1_tripod_over_C_iso_over_Qbar`:
+    `informal/Tripod/Identifications/geomPi1_tripod_over_C_iso_over_Qbar.md`
+
+- Theorems (arithmetic input):
+  - `Tripod.Theorems.galois_action_on_geomPi1_tripod_faithful`:
+    `informal/Tripod/Theorems/galois_action_on_geomPi1_tripod_faithful.md`
+
+Background note (not referenced by an `informal[...]` tag, but useful context):
+
+- `informal/Tripod/Background/outer_galois_action.md`
