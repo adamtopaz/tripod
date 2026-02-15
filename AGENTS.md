@@ -78,14 +78,18 @@ lake exe informalize locations --module Tripod
 ```lean
 informal
 informal x y
-informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
-informal[Tripod.step3.rhoQToOutGeomPi1OverQbar] x
+informal[Tripod.Objects.geomPi1_tripod_over_C]
+informal[Tripod.Theorems.galois_action_on_geomPi1_tripod_faithful] x
 ```
 
 - Location ids are dotted names that map to markdown files:
-  - `informal[Tripod.step3.rhoQToOutGeomPi1OverQbar]` resolves to
-    `informal/Tripod/step3/rhoQToOutGeomPi1OverQbar.md`.
+  - `informal[Tripod.Objects.geomPi1_tripod_over_C]` resolves to
+    `informal/Tripod/Objects/geomPi1_tripod_over_C.md`.
   - Validation happens during elaboration; missing files are hard errors.
+
+- Writing style for `informal/`:
+  - Prefer research-mathematics prose over "project management" language.
+  - Keep basepoint/`Out` conventions consistent; see `informal/Tripod/Conventions.md`.
 
 - Informal markdown source:
   - Keep one markdown file per location id under `informal/<Root>/...`.
@@ -100,7 +104,7 @@ lake exe informalize decls --module Tripod
 lake exe informalize decls --module Tripod --with-locations
 lake exe informalize decl --module Tripod --decl geomPi1ThreePuncturedLineOverC
 lake exe informalize locations --module Tripod
-lake exe informalize location --module Tripod --location Tripod.step3.rhoQToOutGeomPi1OverQbar
+lake exe informalize location --module Tripod --location Tripod.Objects.geomPi1_tripod_over_C
 ```
 
 - Dependency verification workflow:
@@ -182,7 +186,7 @@ lake exe informalize location --module Tripod --location Tripod.step3.rhoQToOutG
 - When `simp` or typeclass search fails, narrow the goal with helper lemmas.
 - Avoid adding `set_option` directives to silence problems unless explicitly requested.
 - Do not introduce new `sorry` placeholders unless the task explicitly allows it.
-- The repository currently contains a known `sorry` in the target theorem; do not proliferate similar placeholders.
+- The project uses `informal[...]` placeholders for unfinished mathematics; do not replace them with `sorry`.
 
 ## Working with this repository as an agent
 - Read `Tripod.lean` and relevant `ToMathlib/**/*.lean` files before editing.

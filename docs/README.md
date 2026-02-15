@@ -1,26 +1,28 @@
 ## docs/ folder
 
-This folder contains human-facing notes about the project blueprint.
+This folder contains extra human-facing notes about the project blueprint. It is not used
+by Informalize.
 
-The Informalize package no longer reads doc references from `docs/*.md`.
-Location checking now uses dotted ids inside `informal[...]` and resolves
-them against markdown headings under `informal/*.md`.
+Informalize location checking uses dotted ids inside `informal[...]` and resolves them to
+markdown files under `informal/`.
 
 ### Informalize id mapping
 
-Use this Lean syntax:
+In this repository, a location id of the form `Tripod.<A>.<B>. ... .<Z>` resolves to a file
+
+`informal/Tripod/A/B/.../Z.md`.
+
+For example, the Lean term
 
 ```lean
-informal[Tripod.step1.freeProfiniteGroupOnTwoIsoGeomPi1OverC]
+informal[Tripod.Objects.geomPi1_tripod_over_C]
 ```
 
-This resolves to:
-
-- markdown file: `informal/Tripod.md`
-- heading path: `step1` then `freeProfiniteGroupOnTwoIsoGeomPi1OverC`
+resolves to the markdown file `informal/Tripod/Objects/geomPi1_tripod_over_C.md`.
 
 ### Conventions
 
 - Keep ids stable once referenced in Lean.
-- Use heading titles that exactly match id components.
-- Keep one clear heading path per placeholder declaration.
+- Keep one markdown file per location id under `informal/Tripod/**`.
+- Use `# <full.location.id>` as the file title.
+- Put shared basepoint/`Out` conventions in `informal/Tripod/Conventions.md` and link to it.

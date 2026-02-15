@@ -2,7 +2,8 @@
 
 This file is a planning notebook for long-form prose.
 Informalize location checks do not read this file directly; they read
-`informal/Tripod.md` through dotted ids used in `Tripod.lean`.
+per-location markdown files under `informal/Tripod/**` through dotted ids used in
+`Tripod.lean`.
 
 ## Tripod overview
 
@@ -23,7 +24,10 @@ Track helper lemmas and transport lemmas in `ToMathlib/**/*.lean`, keeping
 ## Informalize checklist
 
 - Keep each placeholder tagged as `informal[Tripod....]`.
-- Keep heading paths in `informal/Tripod.md` synchronized with Lean ids.
+- Ensure each `Tripod.*` location id used in Lean has a corresponding markdown file under
+  `informal/Tripod/**` (see `docs/README.md`).
+- Update the index/roadmap in `informal/Tripod.md` when adding or renaming locations.
+- Keep basepoint/`Out` conventions consistent (see `informal/Tripod/Conventions.md`).
 - Use CLI checks:
   - `lake exe informalize status --module Tripod`
   - `lake exe informalize deps --module Tripod`

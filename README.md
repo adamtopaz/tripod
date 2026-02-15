@@ -20,11 +20,14 @@ and is assembled from staged Informalize placeholders (not from `sorry`).
 ## Repository structure
 
 - `Tripod.lean`: target theorem statement and core abbreviations.
-- `informal/Tripod.md`: Informalize location source for active placeholders.
+- `informal/Tripod/`: natural-language mathematics notes (one file per `informal[...]` location id).
+- `informal/Tripod.md`: index/roadmap for the `Tripod` informal locations.
+- `informal/Tripod/Conventions.md`: shared conventions (basepoints, conjugacy, `Out`, etc.).
 - `ToMathlib/ProfiniteGrp/Out.lean`: local construction of `ProfiniteGrp.Out` and supporting lemmas.
 - `ToMathlib.lean`: entry point for local helper modules.
 - `lakefile.lean`: Lake package configuration.
 - `lean-toolchain`: pinned Lean toolchain version.
+- `docs/`: extra project notes (not used by Informalize location checking).
 
 ## Prerequisites
 
