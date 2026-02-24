@@ -10,9 +10,29 @@ It documents practical commands and coding conventions used here.
 - Do not edit generated files under `.lake/`.
 - Avoid touching workflow/release files unless the task is CI-related.
 
+## What Counts as Progress
+- Progress is not just "fewer `informal[...]` placeholders". Other concrete progress signals:
+  - Decompose a large informal item into smaller, single-purpose informal items (data vs. properties vs.
+    theorems), with stable location ids and corresponding markdown files.
+  - Generalize: move tripod-specific constructions into reusable abstractions (prefer `ToMathlib/**`),
+    then instantiate them in `Tripod.lean`.
+    - Example: the "fundamental exact sequence" should be treated as a general construction (not tied to
+      `P^1 \ {0,1,\infty}`), and only the geometric/arithmetic inputs remain tripod-specific.
+    - Example: the various etale fundamental groups should be organized as instances of a general
+      "etale fundamental group" construction (e.g. via Galois categories / fiber functors when possible),
+      so base change and comparison maps are reusable lemmas rather than one-off tripod stubs.
+  - Formalize reductions: prove as much purely group-theoretic infrastructure as possible so the remaining
+    informal core is a small, well-scoped arithmetic/geometric statement.
+    - Example: reductions involving the action of `Out(G)` on conjugacy classes of open subgroups / finite
+      quotients should typically be formalizable in mathlib and belong in `ToMathlib/**`.
+  - Improve the blueprint quality: sharpen informal statements, add precise references, and keep basepoint/
+    conjugacy/`Out` conventions consistent.
+  - Improve the dependency story: make the intended dependency DAG explicit and check it with the tooling.
+
 ## Repository map
 - `Tripod.lean`: main theorem statement and top-level project declarations.
 - `ToMathlib/ProfiniteGrp/Out.lean`: local definitions/lemmas for outer automorphisms.
+- `ToMathlib/ProfiniteGrp/OutAction.lean`: outer action from a short exact sequence of profinite groups.
 - `ToMathlib.lean`: umbrella import for local helper modules.
 - `lakefile.lean`: package config and Lean options.
 - `lean-toolchain`: pinned Lean version.
@@ -114,6 +134,20 @@ lake exe informalize location --module Tripod --location Tripod.Objects.geomPi1_
     `lake exe informalize locations --module <Module.Name>` to verify location coverage.
   - Dependencies are inferred from used constants, including transitive traversal through
     non-informal bridge declarations.
+
+- Dependency hygiene (human-facing):
+  - Treat each location id as a node in a dependency DAG; keep it acyclic and sparse.
+  - When adding/splitting informal items, update the informal markdown to record dependencies explicitly.
+    A lightweight convention is a `## Dependencies` section listing the location ids (and key formal lemmas)
+    this item uses.
+  - Prefer to express mathematical dependencies as Lean dependencies between declarations so
+    `lake exe informalize deps --module Tripod` reflects the intended blueprint.
+    (Common pattern: thread earlier constructions as arguments/fields of later constructions, rather than
+    restating them informally.)
+  - After any refactor of placeholders/location ids, rerun:
+    - `lake exe informalize status --module Tripod`
+    - `lake exe informalize deps --module Tripod`
+    and check that new edges are expected.
 
 - CLI flag rules:
   - `--module` / `-m` is required and repeatable.
