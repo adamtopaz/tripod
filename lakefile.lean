@@ -9,8 +9,8 @@ package tripod where
   #[⟨`pp.unicode.fun, true⟩, ⟨`relaxedAutoImplicit, false⟩, ⟨`weak.linter.mathlibStandardSet, true⟩,
     ⟨`maxSynthPendingDepth, 3⟩]
 
-require "leanprover-community" / mathlib @ git "master"
-require informalize from git "https://github.com/adamtopaz/informalize" @ "main"
+require "leanprover-community" / mathlib @ git "v4.28.0"
+require informalize from git "https://github.com/adamtopaz/aftk" @ "main"
 
 @[default_target] lean_lib Tripod
 
